@@ -34,56 +34,58 @@ const tableX = [
   "11101"
 ];
 
-let binary = [];
+function decodeMessage(encondeMessage, cypher) {
+  let binary = [];
 
-for (let i = 0; i < input.length; i++) {
-  let aux = "";
+  for (let i = 0; i < encondeMessage.length; i++) {
+    let aux = "";
 
-  if (input[i] === 198) {
-    i++;
-
-    while (input[i] != 107 && input[i] != 33) {
-      let convert = input[i].toString(2);
-
-      aux += "00000000".substring(convert.length) + convert;
+    if (encondeMessage[i] === 198) {
       i++;
+
+      while (encondeMessage[i] != 107 && encondeMessage[i] != 33) {
+        let convert = encondeMessage[i].toString(2);
+
+        aux += "00000000".substring(convert.length) + convert;
+        i++;
+      }
+    }
+
+    if (aux.length) binary.push(aux);
+  }
+
+  for (let i = 0; i < binary.length; i++) {
+    let aux = "";
+    let j = 0;
+
+    while (j < binary[i].length) {
+      let position = cypher.indexOf(binary[i].substring(j, j + 5)).toString(2);
+      j += 5;
+
+      aux += "0000".substring(position.length) + position;
+    }
+
+    binary[i] = aux;
+  }
+
+  let hexadecimal = [];
+
+  for (let i = 0; i < binary.length; i++) {
+    let j = 0;
+
+    while (j < binary[i].length) {
+      hexadecimal.push(parseInt(binary[i].substring(j, j + 8), 2));
+      j += 8;
     }
   }
 
-  if (aux.length) binary.push(aux);
+  let message = hexadecimal.map(element => String.fromCharCode(element));
+  message = message
+    .toString()
+    .replace(/,/g, "")
+    .trim();
+
+  return message;
 }
 
-for (let i = 0; i < binary.length; i++) {
-  let aux = "";
-  let j = 0;
-
-  while (j < binary[i].length) {
-    let position = tableX.indexOf(binary[i].substring(j, j + 5)).toString(2);
-    j += 5;
-
-    aux += "0000".substring(position.length) + position;
-  }
-
-  binary[i] = aux;
-}
-
-let hexadecimal = [];
-
-for (let i = 0; i < binary.length; i++) {
-  let j = 0;
-
-  while (j < binary[i].length) {
-    hexadecimal.push(parseInt(binary[i].substring(j, j + 8), 2));
-    j += 8;
-  }
-}
-
-let message = hexadecimal.map(element => String.fromCharCode(element));
-message = message
-  .toString()
-  .replace(/,/g, "")
-  .trim();
-
-console.log(binary);
-console.log(hexadecimal);
-console.log("[" + message + "]");
+console.log("[" + decodeMessage(input, tableX) + "]");
