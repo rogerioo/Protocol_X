@@ -39,9 +39,11 @@ function decodeMessage(encondeMessage, cypher) {
     let aux = "";
 
     if (encondeMessage[i] === 0xc6) {
+      //Begin of packet
       i++;
 
       while (encondeMessage[i] != 0x6b && encondeMessage[i] != 0x21) {
+        //End of packet
         let convert = encondeMessage[i].toString(2);
 
         aux += "00000000".substring(convert.length) + convert;
